@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏥 Symptom Checker & Medical Advisory System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .main-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .menu-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .menu-btn {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .menu-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .symptom-section, .result-section {
+            display: none;
+        }
+        
+        .symptom-section.active, .result-section.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        textarea, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+        
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .result-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: #667eea;
+        }
+        
+        .info-box {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+        
+        .fluency-score {
+            background: #e7f3ff;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .common-symptoms {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .common-symptoms h4 {
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+        
+        .symptom-tag {
+            display: inline-block;
+            background: #e0e0e0;
+            padding: 5px 12px;
+            margin: 5px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .symptom-tag:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .back-btn {
+            background: #6c757d;
+            margin-top: 15px;
+        }
+        
+        .confidence-bar {
+            background: #e0e0e0;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .confidence-fill {
+            background: linear-gradient(90deg, #28a745, #007bff);
+            height: 100%;
+            transition: width 0.5s;
+        }
+        .disease-highlight {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin: 5px 0;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.recommendation-box {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-left: 4px solid #28a745;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+}
+
+.recommendation-box strong {
+    color: #155724;
+    font-size: 1.1em;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏥 SYMPTOM CHECKER & MEDICAL ADVISORY SYSTEM</h1>
+            <p>Template-based Natural Language Generation</p>
+        </header>
+        
+        <div class="main-card">
+            <!-- Main Menu -->
+            <div id="mainMenu" class="menu-section">
+                <div class="menu-buttons">
+                    <button class="menu-btn" onclick="showSymptomChecker()">1. Check my symptoms</button>
+                    <button class="menu-btn" onclick="showCommonSymptoms()">2. View common symptoms list</button>
+                </div>
+                <div class="info-box">
+                    <strong>📋 About This System:</strong>
+                    <p style="margin-top: 8px;">This system analyzes your symptoms and provides medical recommendations based on our database.</p>
+                    <p style="margin-top: 5px; font-size: 13px;">⚠️ For informational purposes only. Always consult a doctor.</p>
+                </div>
+            </div>
+            
+            <!-- Symptom Checker Section -->
+            <div id="symptomChecker" class="symptom-section">
+                <h2>🔍 SYMPTOM CHECKER</h2>
+                <div id="commonSymptomsDisplay" class="common-symptoms"></div>
+                <div class="form-group">
+                    <label>👉 Enter your symptoms (separate multiple symptoms with commas):</label>
+                    <textarea id="symptoms" rows="3" placeholder="Example: fever, cough, headache, fatigue"></textarea>
+                    <small>Example: chest pain, shortness of breath, cough</small>
+                </div>
+                <button onclick="checkSymptoms()">🔍 Analyze Symptoms</button>
+                <button class="back-btn" onclick="showMainMenu()">← Back to Main Menu</button>
+            </div>
+            
+            <!-- Results Section -->
+            <div id="resultSection" class="result-section">
+                <div id="resultContent"></div>
+                <button class="back-btn" onclick="backToMenuAfterResult()">← Back to Main Menu</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const commonSymptoms = ['fever', 'cough', 'headache', 'fatigue', 'nausea', 
+                                'chest pain', 'shortness of breath', 'dizziness', 
+                                'sore throat', 'muscle pain'];
+        
+        function showSymptomChecker() {
+            document.getElementById('mainMenu').style.display = 'none';
+            document.getElementById('symptomChecker').classList.add('active');
+            document.getElementById('resultSection').classList.remove('active');
+            
+            // Display common symptoms
+            const symptomsHtml = `
+                <h4>📋 Common symptoms you can enter:</h4>
+                ${commonSymptoms.map(s => `<span class="symptom-tag" onclick="addSymptom('${s}')">${s}</span>`).join('')}
+                <p style="margin-top: 10px;"><small>(Click any symptom to add it, or type any symptom you're experiencing)</small></p>
+            `;
+            document.getElementById('commonSymptomsDisplay').innerHTML = symptomsHtml;
+        }
+        
+        function addSymptom(symptom) {
+            const textarea = document.getElementById('symptoms');
+            const currentValue = textarea.value;
+            if (currentValue) {
+                textarea.value = currentValue + ', ' + symptom;
+            } else {
+                textarea.value = symptom;
+            }
+        }
+        
+        function showCommonSymptoms() {
+            let symptomsList = commonSymptoms.join(', ');
+            alert(`📋 Common symptoms you can enter:\n\n${symptomsList}\n\n(Or type any symptom you're experiencing)`);
+        }
+        
+        function showMainMenu() {
+            document.getElementById('mainMenu').style.display = 'block';
+            document.getElementById('symptomChecker').classList.remove('active');
+            document.getElementById('resultSection').classList.remove('active');
+            document.getElementById('symptoms').value = '';
+        }
+        
+        function backToMenuAfterResult() {
+            showMainMenu();
+        }
+        
+        async function checkSymptoms() {
+            const symptoms = document.getElementById('symptoms').value;
+            
+            if (!symptoms.trim()) {
+                alert('Please enter your symptoms');
+                return;
+            }
+            
+            const resultSection = document.getElementById('resultSection');
+            const resultContent = document.getElementById('resultContent');
+            
+            resultSection.classList.add('active');
+            document.getElementById('symptomChecker').classList.remove('active');
+            resultContent.innerHTML = '<div class="loading">🔄 ANALYZING YOUR SYMPTOMS... Please wait.</div>';
+            
+            try {
+                const response = await fetch('/check', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'symptoms=' + encodeURIComponent(symptoms)
+                });
+                
+                const data = await response.json();
+                
+                let html = '<div class="result-card">';
+                
+                if (data.type === 'serious') {
+    html += `
+        <div class="info-box" style="background: #fff3cd;">
+            ${data.message}
+        </div>
+        <div class="confidence-bar">
+            <div class="confidence-fill" style="width: ${data.confidence}%"></div>
+        </div>
+        <div class="info-box">
+            <strong>📋 Match confidence:</strong> ${data.score}/${data.total_symptoms} symptoms matched
+        </div>
+        <div class="recommendation-box">
+            <strong>💊 RECOMMENDATION:</strong><br>
+            ${data.advice}
+        </div>
+        <div class="fluency-score">
+            📊 FLUENCY SCORE: ${data.fluency_score}/10
+        </div>
+        <div class="warning" style="background: #f8d7da; border-left-color: #dc3545;">
+            <strong>🚨 IMPORTANT:</strong> This is not a definitive diagnosis.<br>
+            Always consult a qualified healthcare professional.
+        </div>
+    `;
+}
+                else if (data.type === 'minor') {
+                    html += `
+                        <div class="info-box success">
+                            ${data.message}
+                        </div>
+                        <div class="fluency-score">
+                            📊 FLUENCY SCORE: ${data.fluency_score}/10
+                        </div>
+                        <div class="info-box">
+                            <strong>📌 MEDICAL ADVICE:</strong> ${data.advice}
+                        </div>
+                        <div class="info-box">
+                            💡 TIP: Get plenty of rest and stay hydrated.
+                        </div>
+                    `;
+                } else {
+                    html += `
+                        <div class="info-box">
+                            ${data.message}
+                        </div>
+                        <div class="fluency-score">
+                            📊 FLUENCY SCORE: ${data.fluency_score || 'N/A'}/10
+                        </div>
+                        <div class="warning">
+                            <strong>📌 RECOMMENDATION:</strong> ${data.advice}
+                        </div>
+                    `;
+                }
+                
+                html += '</div>';
+                resultContent.innerHTML = html;
+                
+            } catch (error) {
+                resultContent.innerHTML = '<div class="result-card" style="background: #fee;">❌ Error connecting to server. Please make sure the Flask app is running.</div>';
+            }
+        }
+        
+        // Initialize - show main menu
+        showMainMenu();
+    </script>
+</body>
+</html>
